@@ -21,20 +21,23 @@ def filter_gaurds(file_list):
         code = None
         with open(file_name) as f:
             code = f.read()
-        matches = re.findall(HEADER_REGEX, code)
-        if not bool(matches):
+        if re.search(HEADER_REGEX, code) is not None:
+            for match in re.finditer(HEADER_REGEX, code):
+                if len(match.groups()) != 2:
+                    print(file_name, " : Header Gaurds found but count should be 2")
+                    return -1
+                else:
+                    if match.group(1) == match.group(2):
+                        # print(match.group(1))
+                        # print(match.group(2))
+                        print("Headers are matched !!!")
+                        return 0
+                    else:
+                        print(file_name, " : Header Gaurds are not matching")
+                        return -1
+        else:
             print(file_name, " : No Header Gaurds found")
-            return
-        if len(matches) != 3:
-            print(file_name, " : Header Gaurds found but count should be 3")
-            return
-        for match in re.finditer(HEADER_REGEX, code):
-            if match.group(1) == match.group(2) == match.group(3):
-            # d[match.group(1)] = re.sub(r"(?:^|[\r\n]+)\s*\*\s*", "", match.group(2)[:-2].strip())
-                print(match.group(1))
-                print(match.group(2))
-            else:
-                print(file_name, " : Header Gaurds are not matching")
+            return 0
 
 
 PATH = "/workspaces/AutomatedBoaringStuff/header_gaurd_validator"
